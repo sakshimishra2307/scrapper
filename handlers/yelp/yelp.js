@@ -13,15 +13,16 @@ const filterHelper = require("../../helpers/filterReviewsWithDate");
 
 const scrapeYelp = async (pageDetails, res, next) => {
   try {
-    const browser = await puppeteer.launch({ headless: false });
+    console.log("processing for yelp data..");
+    const browser = await puppeteer.launch();
     const page = await browser.newPage();
     await page
       .goto(pageDetails.url, { waitUntil: "domcontentloaded" })
       .catch((err) => {
-        console.log(`Error while goto: ${err}`);
+        console.log(`error while goto: ${err}`);
       });
-    let reviews = await fetchData(page, 0);
-    let allReviews = await utils.processingReviews(reviews);
+    let reviews = await utils.fetchData(page, 0);
+    let allReviews = await utils.processingReviews(page, reviews);
     await browser.close();
     console.log("page closed..");
     let result = allReviews.map(({ user, comment, localizedDate, rating }) => {
@@ -49,24 +50,6 @@ const scrapeYelp = async (pageDetails, res, next) => {
   } catch (err) {
     next(err);
   }
-};
-
-/**
- * fetching reviews
- * @param {page} page page with reviews
- * @param {string} url url for fetch call
- */
-
-const fetchData = async (page, pageCount) => {
-  return page.evaluate(
-    async (pCount, payload, url) => {
-      let res = await fetch(`${url}=${pCount}`, payload);
-      return res.json();
-    },
-    pageCount,
-    utils.payload,
-    utils.urls.YelpFetchUrl
-  );
 };
 
 module.exports = scrapeYelp;
