@@ -13,6 +13,7 @@ const filterHelper = require("../../helpers/filterReviewsWithDate");
 
 const scrapeGlassdoor = async (pageDetails, res, next) => {
   try {
+    console.log("processing for glassdoor data..");
     const browser = await puppeteer.launch({ headless: false });
     let newPage = await browser.newPage();
     let res = await fetchReviews(newPage, pageDetails.url);
@@ -66,7 +67,7 @@ const fetchReviews = async (page, url) => {
       .then((res) => {
         gdCsrfToken = res.request().headers()["gd-csrf-token"];
       })
-      .catch(() => console.log("Wait for response failed"));
+      .catch(() => console.log("wait for response failed"));
     return page.evaluate(
       async (url, headers) => {
         let res = await fetch(url, headers);
