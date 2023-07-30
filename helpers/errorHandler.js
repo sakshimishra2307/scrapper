@@ -16,7 +16,7 @@ const errorHandler = (err, req, res, next) => {
     return next(err);
   }
 
-  errObj["stackTrace"] = enviroment === "development" ? err.stack : "";
+  errObj["stackTrace"] = enviroment === "development" ? err.stack : "Network Issue";
   errObj["status"] = status;
   errObj["details"] = err.details || "Error details not found";
   errObj["message"] = err.message || "Internal server error.";
