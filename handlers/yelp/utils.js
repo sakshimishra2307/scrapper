@@ -1,7 +1,7 @@
 "use strict";
 
 const urls = {
-  YelpFetchUrl:
+  yelpFetchUrl:
     "https://www.yelp.com/biz/Lr-KJ-ZGRp8CmwtyjC2VNw/review_feed?rl=en&q=&sort_by=relevance_desc&start",
 };
 
@@ -28,7 +28,7 @@ const payload = {
   credentials: "include",
 };
 
-const processingReviews = async (reviews) => {
+const processingReviews = async (page, reviews) => {
   console.log("reviews fetched..");
   let allReviewsData = [];
   allReviewsData.push(reviews.reviews);
@@ -47,8 +47,21 @@ const processingReviews = async (reviews) => {
   return allReviewsData.flat();
 };
 
+const fetchData = async (page, pageCount) => {
+  return page.evaluate(
+    async (pCount, payload, url) => {
+      let res = await fetch(`${url}=${pCount}`, payload);
+      return res.json();
+    },
+    pageCount,
+    payload,
+    urls.yelpFetchUrl
+  );
+};
+
 module.exports = {
   urls,
   payload,
+  fetchData,
   processingReviews,
 };
