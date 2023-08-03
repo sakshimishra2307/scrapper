@@ -4,6 +4,7 @@ This application helps you scrape reviews posted on glassdoor and yelp web pages
 
 # Setup
 Clone this repository and run the below commands  
+#### Note: Please use node v14.17.3
 
 ```
 >$ npm i  
