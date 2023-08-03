@@ -19,7 +19,7 @@ This application exposes an API with endpoint '/aggregate' and consists of follo
   And for yelp.com provide source_name as 'yelp' and url as https://www.yelp.com/biz/mathis-brothers-furniture-tulsa.
   There is an optional request parameter as filter_date in case you want to filter the reviews from recent to a particular date.  
 
-![alt text](https://github.com/sakshimishra2307/scrapper/blob/main/requestCall.PNG?raw=true)
+![alt text](https://github.com/sakshimishra2307/scrapper/blob/main/reqparams.PNG?raw=true)
 
 
 
