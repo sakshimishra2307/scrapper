@@ -1,7 +1,7 @@
 "use strict";
 
-const scrapeYelp = require("./handlers/yelp/yelp");
-const scrapeGlassdoor = require("./handlers/glassdoor/glassdoor");
+const scrapeYelp = require("./handlers/yelp/index");
+const scrapeGlassdoor = require("./handlers/glassdoor/index");
 
 /**
  * Application route controller
