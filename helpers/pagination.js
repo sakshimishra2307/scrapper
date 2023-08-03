@@ -5,5 +5,3 @@ const paginationFilter = (pageSize, pageNumber, reviews) => {
 module.exports = {
   paginationFilter,
 };
-
-//if(total-pageNumber*pageSize< pageSize)
