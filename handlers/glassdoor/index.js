@@ -3,24 +3,25 @@
 const puppeteer = require("puppeteer");
 const utils = require("./utils");
 const filterHelper = require("../../helpers/filterReviewsWithDate");
+const paginationFilter = require("../../helpers/pagination");
 
 /**
  * Glassdoor scrapper
- * @param {object} pageDetails http request parameters
+ * @param {object} req http request parameters
  * @param {object} res http response
  * @param {function} next invokes the succeeding middleware/function
  */
 
-const scrapeGlassdoor = async (pageDetails, res, next) => {
+const scrapeGlassdoor = async (req, res, next) => {
   try {
     console.log("processing for glassdoor data..");
     const browser = await puppeteer.launch({ headless: false });
     let newPage = await browser.newPage();
-    let res = await fetchReviews(newPage, pageDetails.url);
+    let re = await fetchReviews(newPage, req.url);
     console.log("reviews fetched..");
     await browser.close();
     console.log("page closed..");
-    let result = res[0].data.employerReviews.reviews.map(
+    let result = re[0].data.employerReviews.reviews.map(
       ({ __typename, summary, reviewDateTime, ratingOverall }) => {
         return {
           rating: ratingOverall,
@@ -30,20 +31,22 @@ const scrapeGlassdoor = async (pageDetails, res, next) => {
         };
       }
     );
-
+    let pageSize = req.page_size || result.length;
+    let pageNum = req.page_no || 1;
     result = filterHelper.sortReviews(result);
-    let filteredResult;
-    if (pageDetails.filter_date) {
-      filteredResult = filterHelper.filterReviews(
-        result,
-        pageDetails.filter_date
-      );
+    if (req.filter_date) {
+      result = filterHelper.filterReviews(result, req.filter_date);
     }
+    if ((pageNum - 1) * pageSize > result.length) {
+      return res.status(400).send({
+        message: "please provide valid page number and page size",
+      });
+    }
+
+    result = paginationFilter.paginationFilter(pageSize, pageNum, result);
     return {
-      review_count: pageDetails.filter_date
-        ? filteredResult.length
-        : result.length,
-      aggregated_reviews: pageDetails.filter_date ? filteredResult : result,
+      review_count: result.length,
+      aggregated_reviews: result,
     };
   } catch (err) {
     next(err);
